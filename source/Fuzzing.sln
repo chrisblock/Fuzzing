@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fuzzing", "ObjectFuzzer\Fuzzing.csproj", "{29221BE2-F0AE-4792-8395-949F6105591A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fuzzing", "Fuzzing\Fuzzing.csproj", "{29221BE2-F0AE-4792-8395-949F6105591A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fuzzing.Tests", "Fuzzing.Tests\Fuzzing.Tests.csproj", "{F537BD62-870F-4F0D-A6D9-BA828D53C51C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,6 +15,10 @@ Global
 		{29221BE2-F0AE-4792-8395-949F6105591A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29221BE2-F0AE-4792-8395-949F6105591A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29221BE2-F0AE-4792-8395-949F6105591A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F537BD62-870F-4F0D-A6D9-BA828D53C51C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F537BD62-870F-4F0D-A6D9-BA828D53C51C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F537BD62-870F-4F0D-A6D9-BA828D53C51C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F537BD62-870F-4F0D-A6D9-BA828D53C51C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

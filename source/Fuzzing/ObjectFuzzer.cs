@@ -1,23 +1,24 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 
 namespace Fuzzing
 {
 	public static class ObjectFuzzer
 	{
-		private static readonly char[] AvailableCharacters = "abcdefghijklmnopqrstuvwxyz ".ToCharArray();
-
+		private static readonly object Locker = new object();
 		private static readonly IDictionary<Type, Func<int, object>> TypeFuzzerDictionary = new ConcurrentDictionary<Type, Func<int, object>>();
 
 		static ObjectFuzzer()
 		{
 			RegisterTypeFuzzer(seed => (sbyte)GetNextRandomBytes(seed, 1).First());
+			RegisterTypeFuzzer(seed => GetNextRandomBytes(seed, 1).First() % 2 == 0);
+			RegisterTypeFuzzer(seed => Encoding.UTF8.GetChars(GetNextRandomBytes(seed, 1)).First());
 			RegisterTypeFuzzer(seed => GetNextRandomBytes(seed, 1).First());
 			RegisterTypeFuzzer(seed => BitConverter.ToInt16(GetNextRandomBytes(seed, 2), 0));
 			RegisterTypeFuzzer(seed => BitConverter.ToInt32(GetNextRandomBytes(seed, 4), 0));
@@ -44,10 +45,10 @@ namespace Fuzzing
 				var random = new Random(seed);
 				var buffer = new byte[random.Next(Math.Abs(seed % 500))];
 				random.NextBytes(buffer);
-				return String.Join(String.Empty, buffer.Select(x => AvailableCharacters[x % AvailableCharacters.Length]));
+				return String.Join(String.Empty, Encoding.UTF8.GetChars(buffer));
 			});
 			RegisterTypeFuzzer(seed => Guid.NewGuid());
-			RegisterTypeFuzzer(seed => DateTime.Now.Add(TimeSpan.FromSeconds(seed)));
+			RegisterTypeFuzzer(seed => new DateTime(BitConverter.ToInt64(GetNextRandomBytes(seed, 8), 0)));
 		}
 
 		private static byte[] GetNextRandomBytes(int seed, int number)
@@ -97,7 +98,7 @@ namespace Fuzzing
 
 			if ((TypeFuzzerDictionary.ContainsKey(type) == false) || (overwrite == true))
 			{
-				lock (((IDictionary)TypeFuzzerDictionary).SyncRoot)
+				lock (Locker)
 				{
 					if ((TypeFuzzerDictionary.ContainsKey(type) == false) || (overwrite == true))
 					{
@@ -133,31 +134,38 @@ namespace Fuzzing
 		{
 			object result;
 
-			if (CanFuzzType(type))
+			if (type.IsGenericTypeDefinition && (type.GetGenericTypeDefinition() == typeof(Nullable<>)))
 			{
-				var seed = GetSeed();
-
-				result = TypeFuzzerDictionary[type](seed);
-			}
-			else if (type.IsEnum)
-			{
-				result = FuzzEnum(type);
-			}
-			else if (type.IsAbstract)
-			{
-				throw new ArgumentException(String.Format("Cannot fuzz type '{0}'. It is abstract.", type.Name));
-			}
-			else if (type.IsInterface)
-			{
-				throw new ArgumentException(String.Format("Cannot fuzz type '{0}'. It is an interface.", type.Name));
-			}
-			else if (type.IsValueType || type.IsPrimitive)
-			{
-				throw new ArgumentException(String.Format("Cannot fuzz type '{0}'. It is unrecognized.", type.Name));
+				result = FuzzType(type.GetGenericArguments().Single());
 			}
 			else
 			{
-				result = ReflectiveFuzzType(type);
+				if (CanFuzzType(type))
+				{
+					var seed = GetSeed();
+
+					result = TypeFuzzerDictionary[type](seed);
+				}
+				else if (type.IsEnum)
+				{
+					result = FuzzEnum(type);
+				}
+				else if (type.IsAbstract)
+				{
+					throw new ArgumentException(String.Format("Cannot fuzz type '{0}'. It is abstract.", type.Name));
+				}
+				else if (type.IsInterface)
+				{
+					throw new ArgumentException(String.Format("Cannot fuzz type '{0}'. It is an interface.", type.Name));
+				}
+				else if (type.IsValueType || type.IsPrimitive)
+				{
+					throw new ArgumentException(String.Format("Cannot fuzz type '{0}'. It is unrecognized.", type.Name));
+				}
+				else
+				{
+					result = ReflectiveFuzzType(type);
+				}
 			}
 
 			return result;
