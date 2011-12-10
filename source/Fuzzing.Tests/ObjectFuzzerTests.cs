@@ -17,6 +17,7 @@ namespace Fuzzing.Tests
 		}
 
 		[Test]
+		[Ignore]
 		public void CanFuzzAllSystemTypes()
 		{
 			var assembly = typeof (string).Assembly;
