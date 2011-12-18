@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 
+using Fuzzing.Tests.TestTypes;
+
 using NUnit.Framework;
 
 namespace Fuzzing.Tests
@@ -9,33 +11,57 @@ namespace Fuzzing.Tests
 	public class ObjectFuzzerTests
 	{
 		[Test]
-		public void FuzzType_string_IsNotNull()
+		public void FuzzType_String_IsNotNull()
 		{
-			var obj = ObjectFuzzer.FuzzType<string>();
+			var result = ObjectFuzzer.FuzzType<string>();
 
-			Assert.That(obj, Is.Not.Null);
+			Assert.That(result, Is.Not.Null);
 		}
 
 		[Test]
-		[Ignore]
-		public void CanFuzzAllSystemTypes()
+		public void FuzzType_NullableInteger_IsNotNull()
+		{
+			var result = ObjectFuzzer.FuzzType<int?>();
+
+			Assert.That(result, Is.Not.Null);
+		}
+
+		[Test]
+		public void FuzzType_ITestInterface_IsNotNull()
+		{
+			var result = ObjectFuzzer.FuzzType<ITestInterface>();
+
+			Assert.That(result, Is.Not.Null);
+			Assert.That(result.Property, Is.Not.Null);
+		}
+
+		[Test]
+		public void FuzzType_Enum_IsValidEnumValue()
+		{
+			var result = ObjectFuzzer.FuzzType<TestEnum>();
+
+			Assert.That(Enum.GetValues(typeof(TestEnum)), Contains.Item(result));
+		}
+
+		[Test]
+		public void HasExplicitFuzzingStrategyBeenDefinedForType_AllNonPointerSystemPrimitives_IsTrue()
 		{
 			var assembly = typeof (string).Assembly;
 
-			var canFuzzAllSystemValueTypes = assembly.GetExportedTypes()
+			var systemPrimitivesThatCantBeFuzzed = assembly.GetExportedTypes()
 				.Where(x => x.IsPrimitive)
-				.Select(x => new {type = x, fuzzable = ObjectFuzzer.CanFuzzType(x)})
-				.Aggregate(true, (seed, value) =>
-				{
-					if (value.fuzzable == false)
-					{
-						Console.WriteLine(value.type.Name);
-					}
+				.Where(x => (x != typeof(IntPtr)) && (x != typeof(UIntPtr))) // i don't care about these types. they're scary.
+				.Where(ObjectFuzzer.IsExplicitFuzzingStrategyDefinedForType);
 
-					return seed && value.fuzzable;
-				});
+			Assert.That(systemPrimitivesThatCantBeFuzzed, Is.Empty);
+		}
 
-			Assert.That(canFuzzAllSystemValueTypes, Is.True);
+		[Test]
+		public void HasExplicitFuzzingStrategyBeenDefinedForType_String_IsTrue()
+		{
+			var result = ObjectFuzzer.IsExplicitFuzzingStrategyDefinedForType<string>();
+
+			Assert.That(result, Is.True);
 		}
 	}
 }
