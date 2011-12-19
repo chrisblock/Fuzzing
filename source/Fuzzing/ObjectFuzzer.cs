@@ -11,7 +11,7 @@ namespace Fuzzing
 {
 	public static class ObjectFuzzer
 	{
-		private static readonly object Locker = new object();
+		private static readonly object TypeFuzzerDictionaryLocker = new object();
 		private static readonly IDictionary<Type, Func<int, object>> TypeFuzzerDictionary = new ConcurrentDictionary<Type, Func<int, object>>();
 
 		static ObjectFuzzer()
@@ -98,7 +98,7 @@ namespace Fuzzing
 
 			if ((TypeFuzzerDictionary.ContainsKey(type) == false) || (overwrite == true))
 			{
-				lock (Locker)
+				lock (TypeFuzzerDictionaryLocker)
 				{
 					if ((TypeFuzzerDictionary.ContainsKey(type) == false) || (overwrite == true))
 					{
