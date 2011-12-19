@@ -44,6 +44,18 @@ namespace Fuzzing.Tests
 		}
 
 		[Test]
+		public void FuzzType_TypeWithNoParameterlessConstructor_ThrowsArgumentException()
+		{
+			Assert.That(() => ObjectFuzzer.FuzzType<TypeWithNoParameterlessConstructor>(), Throws.ArgumentException);
+		}
+
+		[Test]
+		public void FuzzType_IUnImplementedInterface_ThrowsArgumentException()
+		{
+			Assert.That(() => ObjectFuzzer.FuzzType<IUnImplementedInterface>(), Throws.ArgumentException);
+		}
+
+		[Test]
 		public void HasExplicitFuzzingStrategyBeenDefinedForType_AllNonPointerSystemPrimitives_IsTrue()
 		{
 			var assembly = typeof (string).Assembly;

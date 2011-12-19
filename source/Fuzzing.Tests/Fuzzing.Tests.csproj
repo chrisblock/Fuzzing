@@ -53,9 +53,11 @@
     <Compile Include="TestTypes\ConcreteTestTypeTwo.cs" />
     <Compile Include="TestTypes\ITestGenericInterface.cs" />
     <Compile Include="TestTypes\ITestInterface.cs" />
+    <Compile Include="TestTypes\IUnImplementedInterface.cs" />
     <Compile Include="TestTypes\TestClassImplementsGenericInterface.cs" />
     <Compile Include="TestTypes\TestEnum.cs" />
     <Compile Include="TestTypes\TestGenericClassImplementsGenericInterface.cs" />
+    <Compile Include="TestTypes\TypeWithNoParameterlessConstructor.cs" />
     <Compile Include="TypeExtensionTests.cs" />
   </ItemGroup>
   <ItemGroup>

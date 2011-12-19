@@ -152,10 +152,11 @@ namespace Fuzzing
 				}
 				else if (type.IsAbstract || type.IsInterface)
 				{
-					var implementingTypes = GetImplementingTypes(type).ToList();
+					var implementingTypes = type.Assembly.GetTypesThatImplement(type).ToList();
 
 					if (implementingTypes.Any())
 					{
+						// TODO: pick one of these at random
 						result = FuzzType(implementingTypes.First());
 					}
 					else
@@ -174,34 +175,6 @@ namespace Fuzzing
 			}
 
 			return result;
-		}
-
-		private static IEnumerable<Type> GetImplementingTypes(Type type)
-		{
-			var result = type.IsGenericType
-				? GetImplementingTypesOfGenericType(type)
-				: GetImplementingTypesOfNonGenericType(type);
-
-			return result;
-		}
-
-		private static IEnumerable<Type> GetImplementingTypesOfGenericType(Type type)
-		{
-			var potentialTypes = type.Assembly.GetExportedTypes()
-				.Where(x => (x.IsAbstract == false) && (x.IsInterface == false))
-				.Where(x => type.IsAssignableFrom(x) || type.IsAssignableFromGenericTypeDefinition(x))
-				.Select(x => x.MakeGenericType(type.GetGenericArguments()));
-
-			return potentialTypes;
-		}
-
-		private static IEnumerable<Type> GetImplementingTypesOfNonGenericType(Type type)
-		{
-			var potentialTypes = type.Assembly.GetExportedTypes()
-				.Where(x => (x.IsAbstract == false) && (x.IsInterface == false))
-				.Where(type.IsAssignableFrom);
-
-			return potentialTypes;
 		}
 
 		private static object FuzzEnum(Type enumType)
@@ -232,16 +205,7 @@ namespace Fuzzing
 
 				if (setMethod != null)
 				{
-					if (property.PropertyType.IsGenericType && (property.PropertyType.GetGenericTypeDefinition() == typeof (Nullable<>)))
-					{
-						var actualType = property.PropertyType.GetGenericArguments().Single();
-
-						setMethod.Invoke(instance, new[] {FuzzType(actualType)});
-					}
-					else
-					{
-						setMethod.Invoke(instance, new[] {FuzzType(property.PropertyType)});
-					}
+					setMethod.Invoke(instance, new[] { FuzzType(property.PropertyType) });
 				}
 			}
 
