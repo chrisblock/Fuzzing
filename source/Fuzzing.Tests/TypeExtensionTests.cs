@@ -2,6 +2,8 @@
 
 using NUnit.Framework;
 
+// ReSharper disable InconsistentNaming
+
 namespace Fuzzing.Tests
 {
 	[TestFixture]

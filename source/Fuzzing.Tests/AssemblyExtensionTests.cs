@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
-using System.Text;
 
 using Fuzzing.Tests.TestTypes;
 
 using NUnit.Framework;
+
+// ReSharper disable InconsistentNaming
 
 namespace Fuzzing.Tests
 {

@@ -1,5 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿// ReSharper disable InconsistentNaming
+
+using System;
 
 using Fuzzing.Tests.TestTypes;
 
@@ -53,27 +54,6 @@ namespace Fuzzing.Tests
 		public void FuzzType_IUnImplementedInterface_ThrowsArgumentException()
 		{
 			Assert.That(() => ObjectFuzzer.FuzzType<IUnImplementedInterface>(), Throws.ArgumentException);
-		}
-
-		[Test]
-		public void HasExplicitFuzzingStrategyBeenDefinedForType_AllNonPointerSystemPrimitives_IsTrue()
-		{
-			var assembly = typeof (string).Assembly;
-
-			var systemPrimitivesThatCantBeFuzzed = assembly.GetExportedTypes()
-				.Where(x => x.IsPrimitive)
-				.Where(x => (x != typeof(IntPtr)) && (x != typeof(UIntPtr))) // i don't care about these types. they're scary.
-				.Where(ObjectFuzzer.IsExplicitFuzzingStrategyDefinedForType);
-
-			Assert.That(systemPrimitivesThatCantBeFuzzed, Is.Empty);
-		}
-
-		[Test]
-		public void HasExplicitFuzzingStrategyBeenDefinedForType_String_IsTrue()
-		{
-			var result = ObjectFuzzer.IsExplicitFuzzingStrategyDefinedForType<string>();
-
-			Assert.That(result, Is.True);
 		}
 	}
 }

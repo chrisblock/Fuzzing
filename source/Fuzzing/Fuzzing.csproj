@@ -41,6 +41,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyExtensions.cs" />
+    <Compile Include="Fuzzers\IFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\ByteFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\CharacterFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\DateTimeFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\DecimalFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\DoubleFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\EnumFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\FloatFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\Fuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\GuidFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\IntegerFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\LongIntegerFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\ReflectionFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\ShortIntegerFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\SignedByteFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\StringFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\UnsignedIntegerFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\UnsignedLongIntegerFuzzer.cs" />
+    <Compile Include="Fuzzers\Impl\UnsignedShortIntegerFuzzer.cs" />
+    <Compile Include="Fuzzers\TypeFuzzer.cs" />
     <Compile Include="ObjectFuzzer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TypeExtensions.cs" />
